@@ -24,37 +24,64 @@ int DataReader <T>::readDataFromFile(){
     string line;
     this->dataVector.clear();
 
-    if(!file){
+    if(file.fail()){
         return -1;
     }
     else{
         while(file >> line){
             this->dataVector.push_back(line);
-            cout << line << endl;
         }
     }
 
     file.close();
-    return 1;
+    return 0;
 }
 
 template <class T>
 void DataReader <T>::showDataVector(){
-
     showData(this->dataVector);
-
 }
-
-
 
 template <class T>
 DataWriter <T>::DataWriter(const string& filepath, const string& filename){
-    this->file.setFilePath(filepath);
-    this->file.setFileName(filename);
+    this->fileOperator.setFilePath(filepath);
+    this->fileOperator.setFileName(filename);
     cout << "Data writer constructor is called!" << endl;
 }
 
 template <class T>
 FileOperator <ofstream>& DataWriter <T> :: getFileOperator(){
     return this->fileOperator;
+}
+
+
+template <class T>
+int DataWriter <T>::writeDataToFile(T& outputDataVector){
+
+    if(outputDataVector.size() == 0){
+        cout << "The data vector is empty!" << endl;
+        return -1;
+    }
+
+    string fileFullPath = this->getFileOperator().getFullFielPath();
+
+    ofstream& file = this->getFileOperator().getFile();
+    
+    file.open(fileFullPath, ios::out);
+
+    if(file.fail()){
+        cout << "Could not open file:" << fileFullPath << endl;
+    }
+
+    for(auto data = outputDataVector.cbegin(); data != outputDataVector.cend(); ++data){
+        file << *data;
+    }
+
+    file.close();
+    return 0;
+}
+
+template <class T>
+void DataWriter <T>::showDataVector(){
+    showData(this->dataVector);
 }

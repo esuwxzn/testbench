@@ -16,7 +16,7 @@ class DataReader{
     
     public:
         DataReader(const string&, const string&);
-        int readDataFromFile(void);
+        int readDataFromFile();
         void showDataVector();
         FileOperator <ifstream>& getFileOperator();
 };
@@ -29,7 +29,7 @@ class DataWriter{
     
     public:
         DataWriter(const string&, const string&);
-        int writeDataToFile(void);
+        int writeDataToFile(T&);
         void showDataVector();
         FileOperator <ofstream>& getFileOperator();
 };
