@@ -1,6 +1,12 @@
 #include <fstream>
 #include <vector>
 #include "FileOperator.cpp"
+template <typename T>
+void showData(const T& dataVector){
+    for(auto data = dataVector.cbegin(); data != dataVector.cend(); ++data){
+        cout << *data << endl;
+    }
+}
 
 template <class T>
 class DataReader{
@@ -10,8 +16,9 @@ class DataReader{
     
     public:
         DataReader(const string&, const string&);
-        int readDataFromFile(void);
+        int readDataFromFile();
         void showDataVector();
+        const vector <T>& getDataVector();
         FileOperator <ifstream>& getFileOperator();
 };
 
@@ -23,7 +30,7 @@ class DataWriter{
     
     public:
         DataWriter(const string&, const string&);
-        int writeDataToFile(void);
+        int writeDataToFile(vector <T> &);
         void showDataVector();
         FileOperator <ofstream>& getFileOperator();
 };
