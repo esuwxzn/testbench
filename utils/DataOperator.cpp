@@ -1,5 +1,6 @@
 #include "DataOperator.h"
 
+//Data reader implementation
 template <class T>
 DataReader <T>::DataReader(const string& filepath, const string& filename){
     this->fileOperator.setFilePath(filepath);
@@ -42,6 +43,14 @@ void DataReader <T>::showDataVector(){
     showData(this->dataVector);
 }
 
+
+template <class T>
+const vector <T>& DataReader <T>::getDataVector(){
+    return this->dataVector;
+}
+
+
+//Data writer implementation
 template <class T>
 DataWriter <T>::DataWriter(const string& filepath, const string& filename){
     this->fileOperator.setFilePath(filepath);
@@ -56,7 +65,7 @@ FileOperator <ofstream>& DataWriter <T> :: getFileOperator(){
 
 
 template <class T>
-int DataWriter <T>::writeDataToFile(T& outputDataVector){
+int DataWriter <T>::writeDataToFile (vector <T> & outputDataVector){
 
     if(outputDataVector.size() == 0){
         cout << "The data vector is empty!" << endl;
@@ -67,14 +76,15 @@ int DataWriter <T>::writeDataToFile(T& outputDataVector){
 
     ofstream& file = this->getFileOperator().getFile();
     
-    file.open(fileFullPath, ios::out);
+    file.open(fileFullPath, ios::out | ios::trunc);
 
     if(file.fail()){
         cout << "Could not open file:" << fileFullPath << endl;
     }
 
     for(auto data = outputDataVector.cbegin(); data != outputDataVector.cend(); ++data){
-        file << *data;
+        file << *data + "\n";
+        this->dataVector.push_back(*data);
     }
 
     file.close();
