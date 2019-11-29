@@ -1,22 +1,19 @@
 #include <iostream>
 #include <fstream>
-#include "./utils/DataOperator.cpp"
+#include "utils/DataOperator.cpp"
 
 int main(){
 
     DataReader <string> obj("./test","in");
-    obj.readDataFromFile();
-    obj.showDataVector();
-
-    vector <string> outputVector = obj.getDataVector();
+    vector <string> dataV = obj.readDataFromFile();
+    obj.showData();
 
     DataWriter <string> obj2("./test", "out");
-    obj2.writeDataToFile(outputVector);
-    obj2.showDataVector();
+    obj2.writeDataToFile(dataV);
 
     DataReader <string> obj3("./test","out");
     obj3.readDataFromFile();
-    obj3.showDataVector();
+    obj3.showData();
 
     return 0;
 

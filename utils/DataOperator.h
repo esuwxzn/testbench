@@ -1,36 +1,43 @@
+#ifndef __DATA_OPERATOR_H__
+#define __DATA_OPERATOR_H__
+
+#include <string>
 #include <fstream>
 #include <vector>
-#include "FileOperator.cpp"
+using namespace std;
+
 template <typename T>
-void showData(const T& dataVector){
-    for(auto data = dataVector.cbegin(); data != dataVector.cend(); ++data){
-        cout << *data << endl;
-    }
-}
+struct File{
+    string  FilePath;
+    string  FileName;
+    T       FileStream;
+};
 
 template <class T>
 class DataReader{
+
     private:
-        FileOperator <ifstream> fileOperator;
-        vector <T> dataVector;
-    
+        File <ifstream> DataFile;
+        vector <T>      DataVector;
+
     public:
         DataReader(const string&, const string&);
-        int readDataFromFile();
-        void showDataVector();
-        const vector <T>& getDataVector();
-        FileOperator <ifstream>& getFileOperator();
+        const vector <T>& readDataFromFile();
+        void setFilePath(const string&);
+        void setFileName(const string&);
+        void showData();
 };
 
 template <class T>
 class DataWriter{
+
     private:
-        FileOperator <ofstream> fileOperator;
-        vector <T> dataVector;
-    
+        File <ofstream> DataFile;
+
     public:
         DataWriter(const string&, const string&);
-        int writeDataToFile(vector <T> &);
-        void showDataVector();
-        FileOperator <ofstream>& getFileOperator();
+        bool writeDataToFile(const vector <T>&);
+        void setFilePath(const string&);
+        void setFileName(const string&);
 };
+#endif

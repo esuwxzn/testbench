@@ -1,97 +1,98 @@
 #include "DataOperator.h"
 
-//Data reader implementation
+template <typename T>
+void displayDataVector(const T& dataVector){
+
+    for(auto data = dataVector.cbegin(); data != dataVector.cend(); ++data){
+        cout << *data << endl;
+    }
+}
+
+//Data reader 
 template <class T>
-DataReader <T>::DataReader(const string& filepath, const string& filename){
-    this->fileOperator.setFilePath(filepath);
-    this->fileOperator.setFileName(filename);
+DataReader <T> :: DataReader(const string& filepath, const string& filename){
+    
+    DataFile.FilePath = filepath;
+    DataFile.FileName = filename;
     cout << "Data reader constructor is called!" << endl;
 }
 
 template <class T>
-FileOperator <ifstream>& DataReader <T> :: getFileOperator(){
-    return this->fileOperator;
+void DataReader <T> :: setFilePath(const string& filepath){
+    DataFile.FilePath = filepath;
 }
 
 template <class T>
-int DataReader <T>::readDataFromFile(){
+void DataReader <T> :: setFileName(const string& filename){
+    DataFile.FileName = filename;
+}
 
-    string fileFullPath = this->getFileOperator().getFullFielPath();
+template <class T>
+void DataReader <T> :: showData(){
+    displayDataVector(DataVector);
+}
 
-    ifstream& file = this->getFileOperator().getFile();
-    
-    file.open(fileFullPath, ios::in);
+template <class T>
+const vector <T>& DataReader <T> :: readDataFromFile(){
 
-    string line;
-    this->dataVector.clear();
+    string fileFullPath = this->DataFile.FilePath + "/" + this->DataFile.FileName;
+    DataVector.clear();
 
-    if(file.fail()){
-        return -1;
+    DataFile.FileStream.open(fileFullPath, ios::in);
+    if(DataFile.FileStream.fail()){
+        cout << "Cannot open file:" << fileFullPath << endl;
+        return DataVector;
     }
-    else{
-        while(file >> line){
-            this->dataVector.push_back(line);
-        }
+
+    T data;
+    while(DataFile.FileStream >> data ){
+        DataVector.push_back(data);
     }
 
-    file.close();
-    return 0;
-}
-
-template <class T>
-void DataReader <T>::showDataVector(){
-    showData(this->dataVector);
+    return DataVector;
 }
 
 
+//Data writer
 template <class T>
-const vector <T>& DataReader <T>::getDataVector(){
-    return this->dataVector;
-}
-
-
-//Data writer implementation
-template <class T>
-DataWriter <T>::DataWriter(const string& filepath, const string& filename){
-    this->fileOperator.setFilePath(filepath);
-    this->fileOperator.setFileName(filename);
+DataWriter <T> :: DataWriter(const string& filepath, const string& filename){
+    DataFile.FilePath = filepath;
+    DataFile.FileName = filename;
     cout << "Data writer constructor is called!" << endl;
+
 }
 
 template <class T>
-FileOperator <ofstream>& DataWriter <T> :: getFileOperator(){
-    return this->fileOperator;
+void DataWriter <T> :: setFilePath(const string& filepath){
+    DataFile.FilePath = filepath;
 }
 
+template <class T>
+void DataWriter <T> :: setFileName(const string& filename){
+    DataFile.FileName = filename;
+}
 
 template <class T>
-int DataWriter <T>::writeDataToFile (vector <T> & outputDataVector){
+bool DataWriter <T> :: writeDataToFile(const vector <T>& inputDataVector){
 
-    if(outputDataVector.size() == 0){
-        cout << "The data vector is empty!" << endl;
-        return -1;
+    if(inputDataVector.size() == 0){
+        cout << "The input data vector is empty, no file will not be created." << endl;
+        return false;
     }
 
-    string fileFullPath = this->getFileOperator().getFullFielPath();
-
-    ofstream& file = this->getFileOperator().getFile();
+    string fileFullPath = DataFile.FilePath + "/" + DataFile.FileName; 
     
-    file.open(fileFullPath, ios::out | ios::trunc);
+    DataFile.FileStream.open(fileFullPath, ios::out | ios::trunc);
 
-    if(file.fail()){
-        cout << "Could not open file:" << fileFullPath << endl;
+    if(DataFile.FileStream.fail()){
+        cout << "Cannot create the file:" << fileFullPath << endl;
+        return false;
     }
 
-    for(auto data = outputDataVector.cbegin(); data != outputDataVector.cend(); ++data){
-        file << *data + "\n";
-        this->dataVector.push_back(*data);
+    for(auto data = inputDataVector.cbegin(); data != inputDataVector.cend(); ++data){
+        DataFile.FileStream << *data + "\n";
     }
 
-    file.close();
-    return 0;
-}
-
-template <class T>
-void DataWriter <T>::showDataVector(){
-    showData(this->dataVector);
+    DataFile.FileStream.close();
+    return true;
 }
