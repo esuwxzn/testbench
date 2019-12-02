@@ -1,19 +1,24 @@
 #include <iostream>
 #include <fstream>
 #include "utils/DataOperator.cpp"
+#include "utils/Validator.cpp"
 
 int main(){
 
     DataReader <string> obj("./test","in");
     vector <string> dataV = obj.readDataFromFile();
-    obj.showData();
+    
+    DataReader <string> objM("./test","in2");
+    vector <string> dataM = objM.readDataFromFile();
+
+    Validator <string> validatorObj;
+    validatorObj.validateResult(dataM, dataV);
+    vector <string> result = validatorObj.getValidatedResultVector();
 
     DataWriter <string> obj2("./test", "out");
-    obj2.writeDataToFile(dataV);
+    obj2.writeDataToFile(result);
 
-    DataReader <string> obj3("./test","out");
-    obj3.readDataFromFile();
-    obj3.showData();
+    // displayDataVector(result);
 
     return 0;
 

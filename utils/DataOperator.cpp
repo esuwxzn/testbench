@@ -49,6 +49,8 @@ const vector <T>& DataReader <T> :: readDataFromFile(){
         DataVector.push_back(data);
     }
 
+    DataFile.FileStream.close();
+
     return DataVector;
 }
 
