@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <algorithm>
 #include "src/Stopwatch.cpp"
@@ -31,10 +32,10 @@ void printVerdictSummary(const int caseNumber,
                          const bool verdictResultMinute){
 
     cout << "###########################################"  << endl;
-    cout << "The validation result for case: " << caseNumber << endl;
-    cout << "H_Second: " << (verdictResultHSecond ? "PASS" : "FAIL") << endl;
-    cout << "Second: " << (verdictResultSecond ? "PASS" : "FAIL") << endl;
-    cout << "Minute: " << (verdictResultMinute ? "PASS" : "FAIL") << endl;
+    cout << "The result summary for case: " << caseNumber << endl;
+    cout << left << setw(10) <<"H_Second: " << (verdictResultHSecond ? "PASS" : "FAIL") << endl;
+    cout << left << setw(10) << "Second: " << (verdictResultSecond ? "PASS" : "FAIL") << endl;
+    cout << left << setw(10) << "Minute: " << (verdictResultMinute ? "PASS" : "FAIL") << endl;
     cout << "###########################################"  << endl << endl;
 
 }
@@ -49,7 +50,7 @@ int main(){
     Validator <string> validatorObj;
     Stopwatch stopwatchObj;
 
-    cout << "Starting run the testbench..." << endl << endl;
+    cout << endl << "Starting run the testbench..." << endl << endl;
 
     for(int caseNumber = 1; caseNumber <= 10; ++caseNumber){
 

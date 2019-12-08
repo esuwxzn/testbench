@@ -1,5 +1,5 @@
 #include "Stopwatch.h"
-
+#include <cmath>
 
 Stopwatch :: Stopwatch(){
 
@@ -55,7 +55,7 @@ int Stopwatch :: run(const int& start_stop,
             }
             else if (lap && !freezeFlag)
             {
-                freezeFlag = currentTime;
+                freezedTime = currentTime;
                 freezeFlag = true;
             }
             else if (lap && freezeFlag)
@@ -68,11 +68,11 @@ int Stopwatch :: run(const int& start_stop,
             if(start_stop){
                 runningFlag = true;
             }
-            else if (lap && freezeFlag)
+            else if (lap && !freezeFlag)
             {
                 currentTime = 0;
             }
-            else if (lap && !freezeFlag)
+            else if (lap && freezeFlag)
             {
                 freezeFlag = false;
             }
