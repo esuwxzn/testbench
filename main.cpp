@@ -1,45 +1,134 @@
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include "src/Stopwatch.cpp"
 #include "utils/DataOperator.cpp"
 #include "utils/Validator.cpp"
+
+using namespace std;
+
+template <typename classT, typename T>
+
+void run(classT& obj,
+         const vector <T>& vectorStartStop, const vector <T>& vectorLap, const vector <T>& vectorReset,
+         vector <T>& vectorHSecond, vector <T>& vectorSecond, vector <T>& vectorMinute){
+
+    for(auto START_STOP = vectorStartStop.cbegin(),
+        LAP = vectorLap.cbegin(),
+        RESET = vectorReset.cbegin();
+        START_STOP != vectorStartStop.cend();
+        ++START_STOP, ++LAP, ++RESET){
+            obj.run(stoi(*START_STOP), stoi(*LAP), stoi(*RESET));
+            vectorHSecond.push_back(obj.getHSecond());
+            vectorSecond.push_back(obj.getSecond());
+            vectorMinute.push_back(obj.getMinute());
+    }
+}
+
+void printVerdictSummary(const int caseNumber,
+                         const bool verdictResultHSecond,
+                         const bool verdictResultSecond,
+                         const bool verdictResultMinute){
+
+    cout << "###########################################"  << endl;
+    cout << "The validation result for case: " << caseNumber << endl;
+    cout << "H_Second: " << (verdictResultHSecond ? "PASS" : "FAIL") << endl;
+    cout << "Second: " << (verdictResultSecond ? "PASS" : "FAIL") << endl;
+    cout << "Minute: " << (verdictResultMinute ? "PASS" : "FAIL") << endl;
+    cout << "###########################################"  << endl << endl;
+
+}
+
 
 const string verificationDataPath = "./verification_data/";
 
 int main(){
 
-    string caseName = "case";
+    DataReader <string> dataReaderObj;
+    DataWriter <string> dataWriterObj;
+    Validator <string> validatorObj;
+    Stopwatch stopwatchObj;
 
-    
+    cout << "Starting run the testbench..." << endl << endl;
 
-    for(int i = 1; i <= 10; ++i){
-        // string test = caseName + to_string(i) + "/in";
-        cout << verificationDataPath + caseName + to_string(i) + "/in" << endl;
+    for(int caseNumber = 1; caseNumber <= 10; ++caseNumber){
 
-    }
+        //Set the path of the input data.
+        string caseInputDataFullPath = verificationDataPath + "case" + to_string(caseNumber) + "/in";
+        string caseOutputDataFullPath = verificationDataPath + "case" + to_string(caseNumber) + "/out";
+        //Read the input data from the file
+        dataReaderObj.setFilePath(caseInputDataFullPath);
+        dataReaderObj.setFileName("START_STOP");
+        vector <string> vectorStartStop = dataReaderObj.readDataFromFile();
 
+        dataReaderObj.setFileName("LAP");
+        vector <string> vectorLap = dataReaderObj.readDataFromFile();
 
-    // DataReader <string> obj("./test","in");
-    // vector <string> dataV = obj.readDataFromFile();
-    
-    // DataReader <string> objM("./test","in2");
-    // vector <string> dataM = objM.readDataFromFile();
+        dataReaderObj.setFileName("RESET");
+        vector <string> vectorReset = dataReaderObj.readDataFromFile();
+        
+        if(!(vectorStartStop.size() == vectorReset.size() and vectorStartStop.size() == vectorLap.size())){
+            cout << "The size of input date for case " << caseNumber << " is inconsistent" << endl;
+            continue;
+        }
 
-    // Validator <string> validatorObj;
-    // validatorObj.validateResult(dataM, dataV);
-    // vector <string> result = validatorObj.getValidatedResultVector();
+        vector <string> vectorHSecond, vectorSecond, vectorMinute;
 
-    // DataWriter <string> obj2("./test", "out");
-    // obj2.writeDataToFile(result);
+        //Reset the stop
+        stopwatchObj.run(0, 0, 1);
 
-    // Stopwatch watchObj;
+        run(stopwatchObj, vectorStartStop, vectorLap, vectorReset, vectorHSecond, vectorSecond, vectorMinute);
 
-    // watchObj.run(1,0,0);
-    // watchObj.run(0,0,0);
-    // watchObj.run(0,0,0);
-    // watchObj.run(0,0,0);
-    // cout << watchObj.getHSecond() << endl;
-    // cout << watchObj.getSecond() << endl;
-    // cout << watchObj.getMinute() << endl;
+        //Write C code output data into files
+        dataWriterObj.setFilePath(caseOutputDataFullPath);
+        dataWriterObj.setFileName("H_Second_C");
+        dataWriterObj.writeDataToFile(vectorHSecond);
+
+        dataWriterObj.setFileName("Second_C");
+        dataWriterObj.writeDataToFile(vectorSecond);
+
+        dataWriterObj.setFileName("Minute_C");
+        dataWriterObj.writeDataToFile(vectorMinute);
+
+        //Validate the result
+        vector <string> vectorOutputM, vectorValidateResult;
+        dataReaderObj.setFilePath(caseOutputDataFullPath);
+        
+        //H_Second
+        vectorOutputM.clear();
+        vectorValidateResult.clear();
+        dataReaderObj.setFileName("H_Second");
+        vectorOutputM = dataReaderObj.readDataFromFile();
+        validatorObj.validateResult(vectorOutputM, vectorHSecond);
+        vectorValidateResult = validatorObj.getValidatedResultVector();
+        dataWriterObj.setFileName("Result_H_Second");
+        dataWriterObj.writeDataToFile(vectorValidateResult);
+        bool verdictResultHSecond = validatorObj.verdictResult();
+
+        //Second
+        vectorOutputM.clear();
+        vectorValidateResult.clear();
+        dataReaderObj.setFileName("Second");
+        vectorOutputM = dataReaderObj.readDataFromFile();
+        validatorObj.validateResult(vectorOutputM, vectorSecond);
+        vectorValidateResult = validatorObj.getValidatedResultVector();
+        dataWriterObj.setFileName("Result_Second");
+        dataWriterObj.writeDataToFile(vectorValidateResult);
+        bool verdictResultSecond = validatorObj.verdictResult();
+
+        //Minute
+        vectorOutputM.clear();
+        vectorValidateResult.clear();
+        dataReaderObj.setFileName("Minute");
+        vectorOutputM = dataReaderObj.readDataFromFile();
+        validatorObj.validateResult(vectorOutputM, vectorMinute);
+        vectorValidateResult = validatorObj.getValidatedResultVector();
+        dataWriterObj.setFileName("Result_Minute");
+        dataWriterObj.writeDataToFile(vectorValidateResult);
+        bool verdictResultMinute = validatorObj.verdictResult();
+
+        printVerdictSummary(caseNumber, verdictResultHSecond, verdictResultMinute, verdictResultMinute);
+    }    
+
     return 0;
 }

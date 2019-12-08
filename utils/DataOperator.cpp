@@ -10,11 +10,19 @@ void displayDataVector(const T& dataVector){
 
 //Data reader 
 template <class T>
+DataReader <T> :: DataReader(){
+    
+    DataFile.FilePath = "";
+    DataFile.FileName = "";
+    // cout << "Data reader constructor is called!" << endl;
+}
+
+template <class T>
 DataReader <T> :: DataReader(const string& filepath, const string& filename){
     
     DataFile.FilePath = filepath;
     DataFile.FileName = filename;
-    cout << "Data reader constructor is called!" << endl;
+    // cout << "Data reader constructor is called!" << endl;
 }
 
 template <class T>
@@ -57,10 +65,18 @@ const vector <T>& DataReader <T> :: readDataFromFile(){
 
 //Data writer
 template <class T>
+DataWriter <T> :: DataWriter(){
+    
+    DataFile.FilePath = "";
+    DataFile.FileName = "";
+    // cout << "Data reader constructor is called!" << endl;
+}
+
+template <class T>
 DataWriter <T> :: DataWriter(const string& filepath, const string& filename){
     DataFile.FilePath = filepath;
     DataFile.FileName = filename;
-    cout << "Data writer constructor is called!" << endl;
+    // cout << "Data writer constructor is called!" << endl;
 
 }
 

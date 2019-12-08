@@ -7,7 +7,6 @@ Stopwatch :: Stopwatch(){
     SECOND = 0;
     MINUTE = 0;
 
-    cout << "Stopwatch constructor is called and all the data is reset." << endl;
 }
 
 const string Stopwatch :: getHSecond(){

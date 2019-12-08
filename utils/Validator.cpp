@@ -18,7 +18,7 @@ Validator <T> :: Validator(){
 
     ValidatedResult = UNKNOWN;
     ValidatedResultVector.clear();
-    cout << "Validator constructor is called!" << endl;
+    // cout << "Validator constructor is called!" << endl;
 }
 
 template <class T>
@@ -46,3 +46,15 @@ template <class T>
 const vector <T>& Validator <T> :: getValidatedResultVector(){
     return ValidatedResultVector;
 }
+
+
+template <class T>
+bool Validator <T> :: verdictResult(){
+
+    for(auto result = ValidatedResultVector.cbegin(); result != ValidatedResultVector.cend(); ++result){
+        if(*result == "FAIL")
+            return false;
+    }
+    return true;
+
+} 

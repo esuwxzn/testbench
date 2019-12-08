@@ -21,6 +21,7 @@ class DataReader{
         vector <T>      DataVector;
 
     public:
+        DataReader();
         DataReader(const string&, const string&);
         const vector <T>& readDataFromFile();
         void setFilePath(const string&);
@@ -35,6 +36,7 @@ class DataWriter{
         File <ofstream> DataFile;
 
     public:
+        DataWriter();
         DataWriter(const string&, const string&);
         bool writeDataToFile(const vector <T>&);
         void setFilePath(const string&);

@@ -16,5 +16,6 @@ class Validator{
         Validator();
         bool validateResult(const vector <T>& resultVectorM, const vector <T>& resultVectorC);
         const vector <T>& getValidatedResultVector();
+        bool verdictResult();
 };
 #endif
