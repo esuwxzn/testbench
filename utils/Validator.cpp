@@ -51,8 +51,11 @@ const vector <T>& Validator <T> :: getValidatedResultVector(){
 template <class T>
 bool Validator <T> :: verdictResult(){
 
+    if(ValidatedResultVector.size() == 0)
+        return false;
+
     for(auto result = ValidatedResultVector.cbegin(); result != ValidatedResultVector.cend(); ++result){
-        if(*result == "FAIL")
+        if(*result != "PASS")
             return false;
     }
     return true;

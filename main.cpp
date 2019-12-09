@@ -27,9 +27,9 @@ void run(classT& obj,
 }
 
 void printVerdictSummary(const int caseNumber,
-                         const bool verdictResultHSecond,
-                         const bool verdictResultSecond,
-                         const bool verdictResultMinute){
+                         const bool& verdictResultHSecond,
+                         const bool& verdictResultSecond,
+                         const bool& verdictResultMinute){
 
     cout << "###########################################"  << endl;
     cout << "The result summary for case: " << caseNumber << endl;
@@ -38,6 +38,35 @@ void printVerdictSummary(const int caseNumber,
     cout << left << setw(10) << "Minute: " << (verdictResultMinute ? "PASS" : "FAIL") << endl;
     cout << "###########################################"  << endl << endl;
 
+}
+
+template <typename T>
+
+void runVerfication(DataReader <T>& dataReaderObj,
+                    const string readFileName,
+                    DataWriter <T>& dataWriterObj,
+                    const string outputFileName,
+                    Validator <T>& validatorObj,
+                    const vector <T>& vectorOutputC,
+                    bool& verdictResult){
+        
+        //initialize the verdict flag
+        verdictResult = false;
+
+        //Read MATLAB output data
+        dataReaderObj.setFileName(readFileName);
+        vector <T> vectorOutputM = dataReaderObj.readDataFromFile();
+        
+        //Validate the result.
+        validatorObj.validateResult(vectorOutputM, vectorOutputC);
+        
+        vector <T> vectorValidateResult = validatorObj.getValidatedResultVector();
+        
+        //Write verdict result to file.
+        dataWriterObj.setFileName(outputFileName);
+        dataWriterObj.writeDataToFile(vectorValidateResult);
+
+        verdictResult = validatorObj.verdictResult();
 }
 
 
@@ -57,6 +86,7 @@ int main(){
         //Set the path of the input data.
         string caseInputDataFullPath = verificationDataPath + "case" + to_string(caseNumber) + "/in";
         string caseOutputDataFullPath = verificationDataPath + "case" + to_string(caseNumber) + "/out";
+    
         //Read the input data from the file
         dataReaderObj.setFilePath(caseInputDataFullPath);
         dataReaderObj.setFileName("START_STOP");
@@ -92,43 +122,15 @@ int main(){
         dataWriterObj.writeDataToFile(vectorMinute);
 
         //Validate the result
-        vector <string> vectorOutputM, vectorValidateResult;
         dataReaderObj.setFilePath(caseOutputDataFullPath);
-        
-        //H_Second
-        vectorOutputM.clear();
-        vectorValidateResult.clear();
-        dataReaderObj.setFileName("H_Second");
-        vectorOutputM = dataReaderObj.readDataFromFile();
-        validatorObj.validateResult(vectorOutputM, vectorHSecond);
-        vectorValidateResult = validatorObj.getValidatedResultVector();
-        dataWriterObj.setFileName("Result_H_Second");
-        dataWriterObj.writeDataToFile(vectorValidateResult);
-        bool verdictResultHSecond = validatorObj.verdictResult();
 
-        //Second
-        vectorOutputM.clear();
-        vectorValidateResult.clear();
-        dataReaderObj.setFileName("Second");
-        vectorOutputM = dataReaderObj.readDataFromFile();
-        validatorObj.validateResult(vectorOutputM, vectorSecond);
-        vectorValidateResult = validatorObj.getValidatedResultVector();
-        dataWriterObj.setFileName("Result_Second");
-        dataWriterObj.writeDataToFile(vectorValidateResult);
-        bool verdictResultSecond = validatorObj.verdictResult();
+        bool verdictResultHSecond, verdictResultSecond, verdictResultMinute;
 
-        //Minute
-        vectorOutputM.clear();
-        vectorValidateResult.clear();
-        dataReaderObj.setFileName("Minute");
-        vectorOutputM = dataReaderObj.readDataFromFile();
-        validatorObj.validateResult(vectorOutputM, vectorMinute);
-        vectorValidateResult = validatorObj.getValidatedResultVector();
-        dataWriterObj.setFileName("Result_Minute");
-        dataWriterObj.writeDataToFile(vectorValidateResult);
-        bool verdictResultMinute = validatorObj.verdictResult();
+        runVerfication(dataReaderObj, "H_Second" , dataWriterObj, "Result_H_Second", validatorObj, vectorHSecond, verdictResultHSecond);
+        runVerfication(dataReaderObj, "Second" ,   dataWriterObj, "Result_Second",   validatorObj, vectorSecond,  verdictResultSecond);
+        runVerfication(dataReaderObj, "Minute" ,   dataWriterObj, "Result_Minute",   validatorObj, vectorMinute,  verdictResultMinute);
 
-        printVerdictSummary(caseNumber, verdictResultHSecond, verdictResultMinute, verdictResultMinute);
+        printVerdictSummary(caseNumber, verdictResultHSecond, verdictResultSecond, verdictResultMinute);
     }    
 
     return 0;
